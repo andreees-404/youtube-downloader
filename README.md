@@ -1,2 +1,2 @@
 # youtube-downloader
-Video downloader from YouTube
+Video downloader from YouTube is a Python project to ...
