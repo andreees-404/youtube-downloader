@@ -1,2 +1,2 @@
 # youtube-downloader
-Python3 projecto to download videos from Youtube
+Python3 project to to download videos from Youtube
