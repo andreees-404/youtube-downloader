@@ -19,11 +19,23 @@ This function downloads a video from URL
 """
 def download_video(url):
     try:
+        print("Downloading video...")
         urllib.request.urlretrieve(url, filename=path.title(url))
     except:
-        print("\n[-] Error has ocurred...")
+        print("\nFailed")
+        
+def download_video(_url, _filename):
+    try:
+        print("Downloading video...")
+        urllib.request.urlretrieve(url=_url, filename=_filename)
+    except:
+        print("`\nError has ocurred...")
 
-
+def download_video():
+    try:
+        print("Downloading audio...")
+    except:
+        print("\nFailed!")
 
 """
 Esta función descarga un video de una url 
@@ -34,17 +46,15 @@ def download_video_from_youtube(url):
     try:
         yt = YouTube(url)
     except:
-        print("\n[!] Connection error")    
+        print("\nConnection error.")    
     video =  yt.streams.get_highest_resolution()
 
     try:
-        print("Downloading video from " + url)
-        video.download(VIDEOS_DIR)
-        filename = video.title
+        print("Downloading video from YouTube...")
+        video.download(output_path=VIDEOS_DIR)
+        print("Done.")
     except:
-        print("\nAn error has ocurred!")
-    
-    print("Done.")
+        print("\nFailed!")
     
 
 
@@ -58,33 +68,66 @@ def download_audio_from_youtube(url):
     try:
         yt = YouTube(url)
     except:
-        print("\nConnection error...")
+        print("\nConnection error.")
         
     audio = yt.streams.filter(only_audio = True).first()
     try:
-        print("Downloading audio from " + url)
-        output = audio.download(AUDIOS_DIR)
+        print("Downloading audio from YouTube...")
+        output = audio.download(output_path=AUDIOS_DIR)
         new_filename = os.path.splitext(output)
         os.rename(output, new_filename[0] + ".mp3")
         print("Done.")
     
     except:
-        print("\nFailed...")
+        print("\nFailed!")
+        
+"""
+Function to download video from Youtube and rename
+file
+
+@param url
+    URL to video
+
+@param filename
+    Filename to rename the video
+"""   
+def download_video_from_youtube(url, _filename):
+    try:
+        yt = YouTube(url)
+        
+        print("Downloading video from YouTube...")
+        video = yt.streams.get_highest_resolution()
+        
+        video.download(output_path=VIDEOS_DIR, filename=_filename)
+        
+    except:
+        print("Connection error.")
+        
         
 
 
 # Main execution
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
-    ap.add_argument("-v", "--video", required=True, help="youtube video URL")
-    ap.add_argument("-a", "--audio", required=False, help="audio only", action=argparse.BooleanOptionalAction)
-    ap.add_argument("-f", "--filename", required=False, help="type a name for your new video/audio", action=argparse.BooleanOptionalAction)
-    ap.add_argument("--youtube", required=False, help="download a video from youtube", action=argparse.BooleanOptionalAction)
     
-    args = vars(ap.parse_args())
-    if (args["youtube"] and args["video"]):
-        download_audio_from_youtube(args["video"])
+    ap = argparse.ArgumentParser(description="Video downloader from any URL.")
+    ap.version = "0.0.1 "
+    ap.add_argument("-u", "--url-video", required=True, help="type any video url", type=str)
+    ap.add_argument("-a", "--audio", required=False, help="audio only")
+    ap.add_argument("-f", "--filename", help="type a name for your new video/audio", action='store')
+    ap.add_argument("--youtube", required=False, help="download a video from youtube")
+    
+    ap.add_argument("-v", "--version", action='version')
+    args = ap.parse_args()
+    variables = vars(args)
+    print(variables)
+    if (args["youtube"] and args["url_video"]):
+        download_audio_from_youtube(args["url_video"])
     elif (args["youtube"]): 
-        download_video_from_youtube(args["video"])
+        download_video_from_youtube(args["url_video"])
+        
+    elif (args["url_video"]):
+        download_video(args["video"])
+    elif (args["url_video"] and args["filename"]):
+        download_video(args["url_video"], args["filename"])
     else:
         print("Please enter a valid option...")
